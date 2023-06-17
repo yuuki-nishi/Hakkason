@@ -148,4 +148,5 @@ public class MapCreater
     public bool isFloor(int X,int Y){
         return Get(X, Y) == Maptile.Floor || Get(X, Y) == Maptile.Ladder;
     }
+    
 }
