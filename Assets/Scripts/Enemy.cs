@@ -5,9 +5,9 @@ using Enums;
 using Character;
 public class Enemy : Character.Character
 {
-    
+        
     public float HP = 50;
-    public float MP = 30;
+    public float MP = 50;
     public void randommove(){
 
     }

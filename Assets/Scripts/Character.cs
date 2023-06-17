@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Character{
-    public abstract class Character
+    public abstract class Character : MonoBehaviour
     {
-        public float HP = 100;
-        public float MP = 100;
+        //public float HP = 100;
+        //public float MP = 100;
         public Vector2 Location;
         protected readonly Vector2 initloc = new Vector2(0,0);
 
