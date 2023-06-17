@@ -67,7 +67,7 @@ public class MapCreater
     const int RoomSizeMin = 25;
     const int roomWidthMin = 4;
     
-    int height, width;
+    public int height, width;
 
     Maptile[,] map;
 
@@ -269,7 +269,7 @@ public class MapCreater
         int LadderRoom;
         do{
             LadderRoom = Random.Range(0,room.Count);
-        }while(startRoom == LadderRoom);
+        }while(startRoom == LadderRoom && room.Count != 1);
 
         for (int i = 0; i < room.Count; i++ ) {
             (int minX, int minY, int maxX, int maxY) RoomSize = roomSizeRandom(room[i]);
