@@ -1,19 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Enums;
 public class MapClass
 {
-    int Xsize = 3;
-    int Ysize = 2;
-    Vector2 MapData = new Vector2(this.Xsize,this.Ysize){ { Maptile.Floor, Maptile.Floor, Maptile.Floor },
-                                  { Maptile.Floor, Maptile.Wall, Maptile.Ladder }};
-}
-
-enum Maptile
-{
-    Floor,
-    Wall,
-    Ladder,
-
+    public int Xsize = 3;//奇数
+    public int Ysize = 3;
+    public Enums.Maptile [,] MapData = new Enums.Maptile[3,3]{ { Enums.Maptile.Floor, Enums.Maptile.Floor, Enums.Maptile.Wall },
+                                  { Enums.Maptile.Floor, Enums.Maptile.Floor, Enums.Maptile.Ladder },
+                                  { Enums.Maptile.Floor, Enums.Maptile.Floor, Enums.Maptile.Floor }};
+    public bool isMovable(int x,int y){
+        Debug.Assert(x>=0);
+        Debug.Assert(y>=0);
+        Debug.Assert(x<this.Xsize);
+        Debug.Assert(y<this.Ysize);
+        Enums.Maptile attr = this.MapData[y,x];
+        return attr == Enums.Maptile.Floor;
+    }
 }
