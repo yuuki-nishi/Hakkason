@@ -17,4 +17,5 @@ public class MapClass
         Enums.Maptile attr = this.MapData[y,x];
         return attr == Enums.Maptile.Floor;
     }
+
 }
