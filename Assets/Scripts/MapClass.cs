@@ -6,8 +6,12 @@ public class MapClass
 {
     int Xsize = 3;
     int Ysize = 2;
-    Vector2 MapData = new Vector2(this.Xsize,this.Ysize){ { Maptile.Floor, Maptile.Floor, Maptile.Floor },
+    Maptime [,] MapData = new Maptile[this.Xsize,this.Ysize]{ { Maptile.Floor, Maptile.Floor, Maptile.Floor },
                                   { Maptile.Floor, Maptile.Wall, Maptile.Ladder }};
+    public bool isFloor(int x,int y){
+        Maptile attr = this.MapData[y][x];
+        return attr == Maptile.Fllor;
+    }
 }
 
 enum Maptile
