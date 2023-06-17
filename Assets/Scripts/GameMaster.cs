@@ -1,27 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Enums;
+//using Turn.Turn;
 public class GameMaster : MonoBehaviour
 {
     // Start is called before the first frame update
     public MapClass MapData;
-    public Turn turn = Turn.Player;
+    public Turn turn = Turn.Player;//外部読み込み用
     public Player player;
-    public Enemy[] enemies;
+    public List<Enemy> enemies;
     public int enemynum = 3;
     public int inputkey_cooltime = 30;
     public GameObject Maplayer;
-    public Camera camera;
+    [SerializeField] private Camera maincamera;
 
     void Start()
     {
         this.MapData = new MapClass();
         this.player = new Player();
-        this.enemies = new Enemy[enemynum];
+        this.enemies = new List<Enemy>();
         for (int i = 0;i < this.enemynum;i++){
-            this.enemies[i] = new Enemy();
+            this.enemies.Add(new Enemy());
         }
+        this.TileMapchips();
     }
 
     // Update is called once per frame
@@ -39,49 +41,82 @@ public class GameMaster : MonoBehaviour
         Vector2 movevec = Vector2.zero;//{0,0}
         //エンターキーが入力された場合「true」
         bool inputkeyflag = false;
-        if (Input.GetKey(KeyCode.Up)){
+        if (Input.GetKey(KeyCode.UpArrow)){
             movevec += Vector2.up;
             inputkeyflag = true;
         }
-        if (Input.GetKey(KeyCode.Down)){
+        if (Input.GetKey(KeyCode.DownArrow)){
             movevec += Vector2.down;
             inputkeyflag = true;
         }
-        if (Input.GetKey(KeyCode.Left)){
+        if (Input.GetKey(KeyCode.LeftArrow)){
             movevec += Vector2.left;
             inputkeyflag = true;
         }
-        if (Input.GetKey(KeyCode.Right)){
+        if (Input.GetKey(KeyCode.RightArrow)){
             movevec += Vector2.right;
             inputkeyflag = true;
         }
-        bool movable = ( this.MapData.isFloor(movevec.x,movevec.y));
-        if (inputkey_cooltime & movable){
-            //入力があったので、ターン処理を始める
-            inputinputkey_cooltime = 30;
-            movetargetloc = movevec + this.player.Location;
-            this.turn = Turn.Player;
-            if (this.MapData.ismovable(movetargetloc)){
-                this.move(movetargetloc);
-            }else{
-                Debug.Log("cannot move to",movetargetloc);
+        Vector2 movetargetloc = movevec + this.player.Location;
+        //敵の方向に入力したかを見る
+        Enemy attackedenemy = null;
+        for (int i = 0;i<this.enemynum;i++){
+            if (this.enemies[i].Location == movetargetloc){
+                attackedenemy = this.enemies[i];
+                break;
             }
-            this.turn = Turn.Enemy;
+        }
+        //移動先が壁化を見る
+        bool movable = ( this.MapData.isMovalbe((int)movevec.x,(int)movevec.y));
+        bool turnprocessflag = false;
+        if (inputkeyflag & movable){
+            //入力があって動けるので、ターン処理を始める
+            this.move(movetargetloc);
+            turnprocessflag = true;
+            this.turn = Turn.Player;
+        }else if (inputkeyflag & (attackedenemy != null)){
+            turnprocessflag = true;
+            //敵に攻撃
+            Context context=attackedenemy.attacked(this.player);
+            if (context == Context.None){
+                //体力消えたとかで消える
+                this.enemies.Remove(attackedenemy);
+            }
+        }else if (inputkeyflag){
+            Debug.Log("cannot move to {0}",movetargetloc);
 
+        }
 
+        //turnprocessflagが立つと、敵が行動できる
+
+        if (turnprocessflag){
+            inputinputkey_cooltime = 30;
+            this.turn=Turn.Enemy;
+            foreach (Enemy enemy in this.enemies){
+                System.Console.Write("attack ememy {0} ", enemy);
+                enemy.attacktoplayer(this.player);
+            }
         }
 
     }
     void move(Vector2 targetloc){
         this.player.move(targetloc);
     }
-    void Display(){
-
+    void TileMapchips(){
+        //タイルを並べる
+        this.Maplayer.clear();
+        for (int x = - this.MapData.Xsize/2;x <= this.MapData.Xsize/2; x++){
+            for (int y = - this.MapData.Ysize/2;y<= this.MapData.Ysize/2; y++){
+                Maptile maptile = this.MapData.MapData[y][x];
+                this.Maplayer.addchip(x,y,maptile);
+            }
+        }
     }
-}
-enum Turn
-{
-    Player,
-    Turn,
-
+    void Display(){
+        //カメラを動かす
+        this.maincamera.transform.position.x = this.player.Location.x;
+        this.maincamera.transform.position.y = this.player.Location.y;
+        //キャラの描写のし直し
+        
+    }
 }
