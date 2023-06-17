@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Enums;
+using Maptile = Enums.Maptile;
 
 class Deque<T>
 {
