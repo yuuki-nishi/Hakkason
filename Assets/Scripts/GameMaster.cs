@@ -17,6 +17,7 @@ public class GameMaster : MonoBehaviour
     [SerializeField] private Camera maincamera;//用
     [SerializeField] public Sprite WallSprite;
     [SerializeField] public Sprite FloorSprite;
+    [SerializeField] public Sprite LadderSprite;
 
     void Start()
     {
@@ -27,7 +28,7 @@ public class GameMaster : MonoBehaviour
             this.enemies.Add(new Enemy());
         }
         Debug.Log(this.enemies);
-        this.maplayer = new Maplayer(this.maplayerobject,this.WallSprite,this.FloorSprite);
+        this.maplayer = new Maplayer(this.maplayerobject,this.WallSprite,this.FloorSprite,this.LadderSprite);
         this.TileMapchips();
     }
 
@@ -126,7 +127,7 @@ public class GameMaster : MonoBehaviour
         this.maplayer.clear();
         for (int x = 0;x < this.MapData.Xsize; x++){
             for (int y = 0;y< this.MapData.Ysize; y++){
-                Debug.Log(y);
+                //Debug.Log(y);
                 Enums.Maptile maptile = this.MapData.MapData[y,x];
                 float x_in_screen = x-this.MapData.Xsize/2;
                 float y_in_screen = y-this.MapData.Ysize/2;
@@ -137,8 +138,10 @@ public class GameMaster : MonoBehaviour
     void Display(){
         //カメラを動かす
         float z = this.maincamera.transform.position.z;
-        float scale = 100.0f;
-        this.maincamera.transform.position.Set(this.player.GetComponent<Player>().Location.x*scale, this.player.GetComponent<Player>().Location.y*scale, z);
+        float scale = 1.0f;
+        //Debug.Log(this.player.GetComponent<Player>().Location);
+        Vector3 settarget = new Vector3(this.player.GetComponent<Player>().Location.x*scale, this.player.GetComponent<Player>().Location.y*scale, z);
+        this.maincamera.transform.position = settarget;
         //キャラの描写のし直し
         
     }
