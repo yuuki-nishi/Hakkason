@@ -128,7 +128,7 @@ public class GameMaster : MonoBehaviour
         for (int x = 0;x < this.MapData.Xsize; x++){
             for (int y = 0;y< this.MapData.Ysize; y++){
                 //Debug.Log(y);
-                Enums.Maptile maptile = this.MapData.MapData[y,x];
+                Enums.Maptile maptile = this.MapData.Get(x,y);
                 float x_in_screen = x-this.MapData.Xsize/2;
                 float y_in_screen = y-this.MapData.Ysize/2;
                 this.maplayer.addchip(x,y,maptile);

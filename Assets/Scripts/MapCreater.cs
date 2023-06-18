@@ -1,13 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-enum Maptile
-{
-    Floor,
-    Wall,
-    Ladder,
-}
+using Maptile = Enums.Maptile;
+// enum Maptile
+// {
+//     Floor,
+//     Wall,
+//     Ladder,
+// }
 
 class Deque<T>
 {
@@ -73,7 +73,7 @@ public class MapCreater
     const int RoomSizeMin = 25;
     const int roomWidthMin = 4;
     
-    int height, width;
+    public int height, width;
 
     Maptile[,] map;
 
