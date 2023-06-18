@@ -14,7 +14,7 @@ public class MapClass
                                   { Enums.Maptile.Floor, Enums.Maptile.Floor, Enums.Maptile.Ladder },
                                   { Enums.Maptile.Floor, Enums.Maptile.Floor, Enums.Maptile.Floor }};
     public MapClass(){
-        var startxy= this.mapcreater.CreateMap(50,50,5);
+        var startxy= this.mapcreater.CreateMap(40,40,5);
         this.Xsize = mapcreater.width;
         this.Ysize = mapcreater.height;
         this.startx = startxy.Item1;

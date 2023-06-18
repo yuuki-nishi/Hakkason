@@ -16,6 +16,7 @@ public class GameMaster : MonoBehaviour
     public Maplayer maplayer=null;
     [SerializeField] public GameObject maplayerobject;//描写用
     [SerializeField] public GameObject enemy;//描写用
+    [SerializeField] public GameObject senbei;//描写用
     [SerializeField] private Camera maincamera;//用
     [SerializeField] public Sprite WallSprite;
     [SerializeField] public Sprite FloorSprite;
@@ -50,6 +51,7 @@ public class GameMaster : MonoBehaviour
         playerstate = this.player.GetComponent<Player>();
         this.PlayerDisplay();
         this.EnemyDisplay();
+        this.SenbeiDisplay();
         this.Display();
     }
     void UpdateState(){
@@ -188,6 +190,21 @@ public class GameMaster : MonoBehaviour
         renderer.sprite = changesprite;
     }
 
+    void SenbeiDisplay(){
+        Vector3 scale = new Vector3(2.0f,2.0f,1.0f);
+        
+        //enemyの描写処理
+        foreach(GameObject e in MapData.senbeis){
+            //プレイヤーをアニメーションさせる
+            SpriteRenderer renderer = e.GetComponent<SpriteRenderer>();
+            Enums.Direction dir = e.GetComponent<Senbei>().direction;
+            //アニメーションゲット
+            Sprite changesprite = this.senbei.GetComponent<Senbei>().GetSpriteFromDirAndTime(dir,Time.frameCount);
+            renderer.sprite = changesprite;
+            e.transform.localScale = scale;
+
+        }
+    }
     void Display(){
         //カメラを動かす
         float z = this.maincamera.transform.position.z;
