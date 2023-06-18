@@ -7,34 +7,46 @@ public class MapClass
     public int Xsize;//奇数
     public int Ysize;
     public readonly int startx,starty;
-    public List<Enemy> enemies;
-    public List<Senbei> senbeis;
+    public List<GameObject> enemies;
+    public List<GameObject> senbeis;
     private MapCreater mapcreater = new MapCreater();
     public Enums.Maptile [,] MapData = new Enums.Maptile[3,3]{ { Enums.Maptile.Floor, Enums.Maptile.Floor, Enums.Maptile.Wall },
                                   { Enums.Maptile.Floor, Enums.Maptile.Floor, Enums.Maptile.Ladder },
                                   { Enums.Maptile.Floor, Enums.Maptile.Floor, Enums.Maptile.Floor }};
     public MapClass(){
-        var startxy= this.mapcreater.CreateMap(10,10,3);
+        var startxy= this.mapcreater.CreateMap(50,50,5);
         this.Xsize = mapcreater.width;
         this.Ysize = mapcreater.height;
         this.startx = startxy.Item1;
         this.starty = startxy.Item2;
         List<Vector2> inititems = this.mapcreater.GetItemPosition();
         List<Vector2> initenemies = this.mapcreater.GetEnemyPosition();
-        List<Enemy> enemies = new List<Enemy>();
-        List<Senbei> senbeis = new List<Senbei>();
+        List<GameObject> enemies = new List<GameObject>();
+        List<GameObject> senbeis = new List<GameObject>();
+        float z = -9;
         foreach(Vector2 v in inititems){
-            Senbei s = new Senbei();
-            s.Location = v;
-            senbeis.Add(s);
+            GameObject o = new GameObject();
+            o.AddComponent<Senbei>();
+            o.GetComponent<Senbei>().Location = v;
+            Vector3 fortransform = new Vector3(v.x,v.y,z);
+            o.transform.position= fortransform;
+            o.AddComponent<SpriteRenderer>();
+            senbeis.Add(o);
         }
         foreach(Vector2 v in initenemies){
-            Enemy s = new Enemy();
-            s.Location = v;
-            enemies.Add(s);
+            GameObject o = new GameObject();
+            o.AddComponent<Enemy>();
+            o.GetComponent<Enemy>().Location = v;
+            Vector3 fortransform = new Vector3(v.x,v.y,z);
+            o.transform.position= fortransform;
+            o.AddComponent<SpriteRenderer>();
+            enemies.Add(o);
         }
         this.senbeis = senbeis;
         this.enemies = enemies;
+        Debug.Log("item eny log");
+        Debug.Log(this.enemies.Count);
+        Debug.Log(this.senbeis.Count);
     }
     public bool isMovable(int x,int y){
         Debug.Assert(x>=0);

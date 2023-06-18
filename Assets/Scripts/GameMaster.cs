@@ -15,6 +15,7 @@ public class GameMaster : MonoBehaviour
     private int inputkey_cooltime = 30;
     public Maplayer maplayer=null;
     [SerializeField] public GameObject maplayerobject;//描写用
+    [SerializeField] public GameObject enemy;//描写用
     [SerializeField] private Camera maincamera;//用
     [SerializeField] public Sprite WallSprite;
     [SerializeField] public Sprite FloorSprite;
@@ -47,6 +48,9 @@ public class GameMaster : MonoBehaviour
             this.UpdateState();
         }
         playerstate = this.player.GetComponent<Player>();
+        this.PlayerDisplay();
+        this.EnemyDisplay();
+        this.Display();
     }
     void UpdateState(){
 
@@ -82,18 +86,13 @@ public class GameMaster : MonoBehaviour
             //向きは変わらない
             playerdir = this.player.GetComponent<Player>().direction;
         }
-        //プレイヤーをアニメーションさせる
-        SpriteRenderer renderer = this.player.GetComponent<SpriteRenderer>();
-        //アニメーションゲット
-        Sprite changesprite = this.player.GetComponent<Player>().GetSpriteFromDirAndTime(playerdir,Time.frameCount);
-        renderer.sprite = changesprite;
         //
         Vector2 ploc = this.player.GetComponent<Player>().Location;//画面ではなく、抽象的な升目の方
         Vector2 movetargetloc = movevec + ploc;
         //敵の方向に入力したかを見る
-        Enemy attackedenemy = null;
+        GameObject attackedenemy = null;
         for (int i = 0;i<MapData.enemies.Count;i++){
-            if (MapData.enemies[i].Location == movetargetloc){
+            if (MapData.enemies[i].GetComponent<Enemy>().Location == movetargetloc){
                 attackedenemy = MapData.enemies[i];
                 break;
             }
@@ -118,7 +117,7 @@ public class GameMaster : MonoBehaviour
         }else if (inputkeyflag & (attackedenemy != null)){
             turnprocessflag = true;
             //敵に攻撃
-            Context context=attackedenemy.attacked(this.player.GetComponent<Player>());
+            Context context=attackedenemy.GetComponent<Enemy>().attacked(this.player.GetComponent<Player>());
             if (context == Context.None){
                 //体力消えたとかで消える
                 MapData.enemies.Remove(attackedenemy);
@@ -133,20 +132,20 @@ public class GameMaster : MonoBehaviour
         if (turnprocessflag){
             this.inputkey_cooltime = 30;
             this.turn=Enums.Turn.Enemy;
-            foreach (Enemy enemy in MapData.enemies){
+            foreach (GameObject e in MapData.enemies){
+                Enemy enemy = e.GetComponent<Enemy>();
                 System.Console.Write("attack ememy {0} ", enemy);
                 enemy.attacktoplayer(this.player.GetComponent<Player>());
             }
         }
-        this.Display();
 
     }
     void move(Vector2 targetloc){
+        //playerの描写処理
         this.player.GetComponent<Player>().move(targetloc);
         float z = this.player.transform.position.z;
         Vector3 forposition_vec = new Vector3(targetloc.x,targetloc.y,z);
         this.player.transform.position = forposition_vec;
-        
         Debug.Log(this.player.GetComponent<SpriteRenderer>().sprite);
         Debug.Log("player move to "+targetloc.x+" "+targetloc.y);
     }
@@ -165,6 +164,30 @@ public class GameMaster : MonoBehaviour
             }
         }
     }
+    void EnemyDisplay(){
+        
+        //enemyの描写処理
+        foreach(GameObject e in MapData.enemies){
+            //プレイヤーをアニメーションさせる
+            SpriteRenderer renderer = e.GetComponent<SpriteRenderer>();
+            Enums.Direction dir = e.GetComponent<Enemy>().direction;
+            //アニメーションゲット
+            Sprite changesprite = this.enemy.GetComponent<Enemy>().GetSpriteFromDirAndTime(dir,Time.frameCount);
+            renderer.sprite = changesprite;
+
+        }
+    }
+    
+    void PlayerDisplay(){
+        
+        Enums.Direction playerdir = this.player.GetComponent<Player>().direction;
+        //プレイヤーをアニメーションさせる
+        SpriteRenderer renderer = this.player.GetComponent<SpriteRenderer>();
+        //アニメーションゲット
+        Sprite changesprite = this.player.GetComponent<Player>().GetSpriteFromDirAndTime(playerdir,Time.frameCount);
+        renderer.sprite = changesprite;
+    }
+
     void Display(){
         //カメラを動かす
         float z = this.maincamera.transform.position.z;
