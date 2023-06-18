@@ -69,16 +69,23 @@ public class MapCreater
 
     const int RangeSizeMin = 50;
     const int RangeWidthMin = 7;
-
-    const int RoomSizeMin = 25;
+    const int RoomSizeMin = 16;
     const int roomWidthMin = 4;
     
     public int height, width;
 
     Maptile[,] map;
 
+    public int EnemyCount;
+    List<Vector2> EnemyPosition;
+
+    public int ItemCount;
+    List<Vector2> ItemPosition;
+
     public MapCreater(){
         Random.InitState(System.DateTime.Now.Millisecond);
+        EnemyPosition = new List<Vector2>();
+        ItemPosition = new List<Vector2>();
     }
 
     // 標準偏差つけるなどしてもいいかも？
@@ -191,18 +198,18 @@ public class MapCreater
         while (see.Count != 0) {
             (int X, int Y)pos = see.Peek();
             see.Dequeue();
-            if (Get(pos.X,pos.Y) == Maptile.Wall) continue;
+            if (GetTile(pos.X,pos.Y) == Maptile.Wall) continue;
             int cnt = 0;
-            if (Get(pos.X + 1, pos.Y) == Maptile.Wall) cnt++;
-            if (Get(pos.X - 1, pos.Y) == Maptile.Wall) cnt++;
-            if (Get(pos.X, pos.Y + 1) == Maptile.Wall) cnt++;
-            if (Get(pos.X, pos.Y - 1) == Maptile.Wall) cnt++;
+            if (GetTile(pos.X + 1, pos.Y) == Maptile.Wall) cnt++;
+            if (GetTile(pos.X - 1, pos.Y) == Maptile.Wall) cnt++;
+            if (GetTile(pos.X, pos.Y + 1) == Maptile.Wall) cnt++;
+            if (GetTile(pos.X, pos.Y - 1) == Maptile.Wall) cnt++;
             if (cnt == 3) {
                 map[pos.X, pos.Y] = Maptile.Wall;
-                if (Get(pos.X + 1, pos.Y) != Maptile.Wall) see.Enqueue((pos.X + 1, pos.Y));
-                if (Get(pos.X - 1, pos.Y) != Maptile.Wall) see.Enqueue((pos.X - 1, pos.Y));
-                if (Get(pos.X, pos.Y + 1) != Maptile.Wall) see.Enqueue((pos.X, pos.Y + 1));
-                if (Get(pos.X, pos.Y - 1) != Maptile.Wall) see.Enqueue((pos.X, pos.Y - 1));
+                if (GetTile(pos.X + 1, pos.Y) != Maptile.Wall) see.Enqueue((pos.X + 1, pos.Y));
+                if (GetTile(pos.X - 1, pos.Y) != Maptile.Wall) see.Enqueue((pos.X - 1, pos.Y));
+                if (GetTile(pos.X, pos.Y + 1) != Maptile.Wall) see.Enqueue((pos.X, pos.Y + 1));
+                if (GetTile(pos.X, pos.Y - 1) != Maptile.Wall) see.Enqueue((pos.X, pos.Y - 1));
             }
         }
 
@@ -213,10 +220,13 @@ public class MapCreater
     public (int X, int Y) CreateMap (int Height, int Width, int Rooms){
 
         int startX = 0, startY = 0;
-
         height = Height;
         width = Width;
         map = new Maptile[Height, Width];
+        EnemyPosition.Clear();
+        EnemyCount = 0;
+        ItemPosition.Clear();
+        ItemCount = 0;
 
         for (int i = 0; i < Height; i++ ) {
             for (int j = 0; j < Width; j++ ) {
@@ -285,7 +295,16 @@ public class MapCreater
             LadderRoom = Random.Range(0,room.Count);
         }while(startRoom == LadderRoom && room.Count != 1);
 
+
+        int[] item = new int[room.Count];
         for (int i = 0; i < room.Count; i++ ) {
+            item[i] = 0;
+        }
+        ItemCount = Random.Range(Mathf.Min(2,room.Count) , room.Count+1);
+        for (int i = 0; i < ItemCount; i++)item[i] = 1;
+
+        for (int i = 0; i < room.Count; i++ ) {
+
             (int minX, int minY, int maxX, int maxY) RoomSize = roomSizeRandom(room[i]);
 
             for (int x = RoomSize.minX; x < RoomSize.maxX; x++ ) {
@@ -297,6 +316,37 @@ public class MapCreater
             if (i == startRoom) {
                 startX = Random.Range(RoomSize.minX + 1, RoomSize.maxX - 1);
                 startY = Random.Range(RoomSize.minY + 1, RoomSize.maxY - 1);
+            }
+
+            else {
+                int enemyNum = Random.Range(1,3);
+                EnemyCount += enemyNum;
+                for (int j = 0; j < enemyNum; j++){
+                    Vector2 tmpPosition = new Vector2(Random.Range(RoomSize.minX, RoomSize.maxX), Random.Range(RoomSize.minY, RoomSize.maxY));
+                    bool same = false;
+                    for (int k = 0; k < EnemyPosition.Count; k++) {
+                        if(tmpPosition == EnemyPosition[k])same = true;
+                    }
+                    if (same){
+                        j--;
+                    }else{
+                        EnemyPosition.Add(tmpPosition);
+                    }
+                }
+            }
+
+            if (item[i] == 1) {
+                while(true){
+                    bool same = false;
+                    Vector2 tmpPosition = new Vector2(Random.Range(RoomSize.minX, RoomSize.maxX), Random.Range(RoomSize.minY, RoomSize.maxY));
+                    for (int k = 0; k < EnemyPosition.Count; k++) {
+                        if (tmpPosition == EnemyPosition[k])same = true;
+                    }
+                    if (same == false) {
+                        ItemPosition.Add(tmpPosition);
+                        break;
+                    }
+                }
             }
 
             int roadNum = Random.Range(2,4);
@@ -354,17 +404,6 @@ public class MapCreater
 
         deleteWasteRoad();
 
-        string res = "";
-        for (int i = 0; i < height; i++ ) {
-            for (int j = 0; j < width; j++) {
-                if(startX == i && startY == j)res+='S';
-                else if(map[i,j]==Maptile.Ladder) res += 'G';
-                else res += map[i,j]==Maptile.Wall?'.':'#';
-            }
-            res += "\n";
-        }
-        Debug.Log(res);
-
         return (startX, startY);
     }
 
@@ -376,20 +415,31 @@ public class MapCreater
         return X < 0 || height <= X || Y < 0 || width <= Y;
     }
     
-
-    public Maptile Get (int X, int Y) {
+    public Maptile GetTile (int X, int Y) {
         if (IsOutOfRange(X, Y)) return Maptile.Wall;
         return map[X, Y];
     }
     
-    // その場所が地面かどうかを返します
-    public bool isFloor(int X,int Y){
-        return Get(X, Y) == Maptile.Floor;
+    public bool isFloor(int X,int Y) {
+        return GetTile(X, Y) == Maptile.Floor;
     }
-                           
-    public bool isMovable(int X,int Y){
-        if(IsOutOfRange(X, Y)) return false;
-        return Get(X, Y) == Maptile.Floor || Get(X, Y) == Maptile.Ladder;
+
+    public bool isLadder(int X, int Y) {
+        return GetTile(X, Y) == Maptile.Ladder;
+    }
+    
+    public bool isMovable(int X,int Y) {
+        return GetTile(X, Y) == Maptile.Floor || GetTile(X, Y) == Maptile.Ladder;
+    }
+
+    public Vector2 GetEnemyPosition(int Index) {
+        Debug.Assert(0 <= Index && Index < EnemyCount);
+        return EnemyPosition[Index];
+    }
+
+    public Vector2 GetItemPosition(int Index) {
+        Debug.Assert(0 <= Index && Index < ItemCount);
+        return ItemPosition[Index];
     }
 
 }
