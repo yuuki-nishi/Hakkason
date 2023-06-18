@@ -6,14 +6,17 @@ public class MapClass
 {
     public int Xsize;//奇数
     public int Ysize;
+    public readonly int startx,starty;
     private MapCreater mapcreater = new MapCreater();
     public Enums.Maptile [,] MapData = new Enums.Maptile[3,3]{ { Enums.Maptile.Floor, Enums.Maptile.Floor, Enums.Maptile.Wall },
                                   { Enums.Maptile.Floor, Enums.Maptile.Floor, Enums.Maptile.Ladder },
                                   { Enums.Maptile.Floor, Enums.Maptile.Floor, Enums.Maptile.Floor }};
     public MapClass(){
-        this.mapcreater.CreateMap(10,10,3);
+        var startxy= this.mapcreater.CreateMap(10,10,3);
         this.Xsize = mapcreater.width;
         this.Ysize = mapcreater.height;
+        this.startx = startxy.Item1;
+        this.starty = startxy.Item2;
     }
     public bool isMovable(int x,int y){
         Debug.Assert(x>=0);

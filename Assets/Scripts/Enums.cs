@@ -18,4 +18,12 @@ namespace Enums{
         Ladder,
 
     }
+    public enum Direction
+    {
+        Up,
+        Down,
+        Left,
+        Right,
+        Null,
+    }
 }

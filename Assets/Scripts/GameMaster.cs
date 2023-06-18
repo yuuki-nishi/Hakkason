@@ -30,6 +30,9 @@ public class GameMaster : MonoBehaviour
         Debug.Log(this.enemies);
         this.maplayer = new Maplayer(this.maplayerobject,this.WallSprite,this.FloorSprite,this.LadderSprite);
         this.TileMapchips();
+        //プレイヤーの初期地点
+        Vector2 startvec = new Vector2(this.MapData.startx,this.MapData.starty);
+        this.player.GetComponent<Player>().Location = startvec;
     }
 
     // Update is called once per frame
@@ -47,21 +50,35 @@ public class GameMaster : MonoBehaviour
         Vector2 movevec = Vector2.zero;//{0,0}
         //エンターキーが入力された場合「true」
         bool inputkeyflag = false;
+        Enums.Direction playerdir = Enums.Direction.Null;
         if (Input.GetKey(KeyCode.UpArrow)){
             movevec += Vector2.up;
             inputkeyflag = true;
+            playerdir = Enums.Direction.Up;
         }
         if (Input.GetKey(KeyCode.DownArrow)){
             movevec += Vector2.down;
             inputkeyflag = true;
+            playerdir = Enums.Direction.Down;
         }
         if (Input.GetKey(KeyCode.LeftArrow)){
             movevec += Vector2.left;
             inputkeyflag = true;
+            playerdir = Enums.Direction.Left;
         }
         if (Input.GetKey(KeyCode.RightArrow)){
             movevec += Vector2.right;
             inputkeyflag = true;
+            playerdir = Enums.Direction.Right;
+        }
+        //向きを変えるだけならばタダ
+        if (playerdir != Enums.Direction.Null){
+            this.player.GetComponent<Player>().direction = playerdir;
+            //SpriteRenderer renderer = this.player.GetComponent<SpriteRenderer>();
+            //アニメーションゲット
+            Sprite changesprite = this.player.GetComponent<Player>().GetSpriteFromDirAndTime(playerdir,Time.frameCount);
+            this.player.GetComponent<SpriteRenderer>().sprite = changesprite;
+
         }
         Vector2 ploc = this.player.GetComponent<Player>().Location;//画面ではなく、抽象的な升目の方
         Vector2 movetargetloc = movevec + ploc;
@@ -118,6 +135,11 @@ public class GameMaster : MonoBehaviour
     }
     void move(Vector2 targetloc){
         this.player.GetComponent<Player>().move(targetloc);
+        float z = this.player.transform.position.z;
+        Vector3 forposition_vec = new Vector3(targetloc.x,targetloc.y,z);
+        this.player.transform.position = forposition_vec;
+        
+        Debug.Log(this.player.GetComponent<SpriteRenderer>().sprite);
         Debug.Log("player move to "+targetloc.x+" "+targetloc.y);
     }
     void TileMapchips(){
