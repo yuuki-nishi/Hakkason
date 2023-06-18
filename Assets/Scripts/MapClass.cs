@@ -26,4 +26,5 @@ public class MapClass
     public Enums.Maptile Get(int x,int y){
         return this.mapcreater.Get(x,y);
     }
+
 }

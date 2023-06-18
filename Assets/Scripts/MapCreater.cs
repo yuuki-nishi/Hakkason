@@ -126,6 +126,14 @@ public class MapCreater
             (int X, int Y) pos = see.PopFront();
             if(cost[pos.X, pos.Y] != 0 && map[pos.X, pos.Y] == Maptile.Floor ){
                 int X = pos.X, Y = pos.Y;
+                for(int i = 0; i < 4; i++){
+                    if(cost[X + dx[dir[i]], Y + dy[dir[i]]] == cost[X, Y]){
+                        X = X + dx[dir[i]];
+                        Y = Y + dy[dir[i]];
+                        map[X, Y] = Maptile.Floor;
+                        break;
+                    }
+                }
                 while (cost[X, Y] != 0) {
                     for (int i = 0; i < 4; i++){
                         int p = Random.Range(i,4);
@@ -135,10 +143,10 @@ public class MapCreater
                         if(cost[X + dx[dir[i]], Y + dy[dir[i]]] == cost[X, Y] - 1){
                             X = X + dx[dir[i]];
                             Y = Y + dy[dir[i]];
+                            map[X, Y] = Maptile.Floor;
                             break;
                         }
                     }
-                    map[X, Y] = Maptile.Floor;
                 }
                 connectAllRoom(startX, startY);
                 break;
@@ -275,7 +283,7 @@ public class MapCreater
         int LadderRoom;
         do{
             LadderRoom = Random.Range(0,room.Count);
-        }while(startRoom == LadderRoom);
+        }while(startRoom == LadderRoom && room.Count != 1);
 
         for (int i = 0; i < room.Count; i++ ) {
             (int minX, int minY, int maxX, int maxY) RoomSize = roomSizeRandom(room[i]);
@@ -376,7 +384,12 @@ public class MapCreater
     
     // その場所が地面かどうかを返します
     public bool isFloor(int X,int Y){
+        return Get(X, Y) == Maptile.Floor;
+    }
+                           
+    public bool isMovable(int X,int Y){
+        if(IsOutOfRange(X, Y)) return false;
         return Get(X, Y) == Maptile.Floor || Get(X, Y) == Maptile.Ladder;
     }
-    
+
 }
