@@ -21,7 +21,7 @@ namespace Character{
         }
         public Sprite GetSpriteFromDirAndTime(Enums.Direction dir,int time){
             int animenum = this.AnimationSprites.Count/4;
-            int frameinterval = 20;//何フレームに一回切り替えるか
+            int frameinterval = 30;//何フレームに一回切り替えるか
             int targetanimenum = (time/frameinterval) % animenum;
             int dirnum = this.enumtoint(dir);
             int targetnumber = dirnum*animenum + targetanimenum;

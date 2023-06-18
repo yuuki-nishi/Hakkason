@@ -59,10 +59,12 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\Enemy.cs" />
     <Compile Include="Assets\Scripts\context.cs" />
+    <Compile Include="Assets\Scripts\Senbei.cs" />
     <Compile Include="Assets\Scripts\Maplayer.cs" />
     <Compile Include="Assets\Scripts\MapCreater.cs" />
     <Compile Include="Assets\Scripts\Character.cs" />
     <Compile Include="Assets\Scripts\Enums.cs" />
+    <Compile Include="Assets\Scripts\Gauge.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
     <Compile Include="Assets\Scripts\GameMaster.cs" />
     <Compile Include="Assets\Scripts\MapClass.cs" />

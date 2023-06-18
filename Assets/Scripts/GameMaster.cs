@@ -10,7 +10,7 @@ public class GameMaster : MonoBehaviour
     public Turn turn = Turn.Player;//外部読み込み用
     [SerializeField] public GameObject player;
     public static Player playerstate;
-    public List<Enemy> enemies;
+    //public List<Enemy> enemies;
     public int enemynum = 3;
     private int inputkey_cooltime = 30;
     public Maplayer maplayer=null;
@@ -23,17 +23,18 @@ public class GameMaster : MonoBehaviour
     void Start()
     {
         MapData = new MapClass();
-        //this.player = new Player();
-        this.enemies = new List<Enemy>();
-        for (int i = 0;i < this.enemynum;i++){
-            this.enemies.Add(new Enemy());
-        }
-        Debug.Log(this.enemies);
+        // //this.player = new Player();
+        // this.enemies = new List<Enemy>();
+        // for (int i = 0;i < this.enemynum;i++){
+        //     this.enemies.Add(new Enemy());
+        // }
+        //Debug.Log(this.enemies);
         this.maplayer = new Maplayer(this.maplayerobject,this.WallSprite,this.FloorSprite,this.LadderSprite);
         this.TileMapchips();
         //プレイヤーの初期地点
         Vector2 startvec = new Vector2(MapData.startx,MapData.starty);
         this.player.GetComponent<Player>().Location = startvec;
+
     }
 
     // Update is called once per frame
@@ -91,9 +92,9 @@ public class GameMaster : MonoBehaviour
         Vector2 movetargetloc = movevec + ploc;
         //敵の方向に入力したかを見る
         Enemy attackedenemy = null;
-        for (int i = 0;i<this.enemynum;i++){
-            if (this.enemies[i].Location == movetargetloc){
-                attackedenemy = this.enemies[i];
+        for (int i = 0;i<MapData.enemies.Count;i++){
+            if (MapData.enemies[i].Location == movetargetloc){
+                attackedenemy = MapData.enemies[i];
                 break;
             }
         }
@@ -120,7 +121,7 @@ public class GameMaster : MonoBehaviour
             Context context=attackedenemy.attacked(this.player.GetComponent<Player>());
             if (context == Context.None){
                 //体力消えたとかで消える
-                this.enemies.Remove(attackedenemy);
+                MapData.enemies.Remove(attackedenemy);
             }
         }else if (inputkeyflag){
             Debug.Log("cannot move to "+movetargetloc.x+" "+movetargetloc.y);
@@ -132,7 +133,7 @@ public class GameMaster : MonoBehaviour
         if (turnprocessflag){
             this.inputkey_cooltime = 30;
             this.turn=Enums.Turn.Enemy;
-            foreach (Enemy enemy in this.enemies){
+            foreach (Enemy enemy in MapData.enemies){
                 System.Console.Write("attack ememy {0} ", enemy);
                 enemy.attacktoplayer(this.player.GetComponent<Player>());
             }

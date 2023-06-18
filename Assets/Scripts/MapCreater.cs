@@ -432,14 +432,14 @@ public class MapCreater
         return GetTile(X, Y) == Maptile.Floor || GetTile(X, Y) == Maptile.Ladder;
     }
 
-    public Vector2 GetEnemyPosition(int Index) {
-        Debug.Assert(0 <= Index && Index < EnemyCount);
-        return EnemyPosition[Index];
+    public List<Vector2> GetEnemyPosition() {
+        //Debug.Assert(0 <= Index && Index < EnemyCount);
+        return EnemyPosition;
     }
 
-    public Vector2 GetItemPosition(int Index) {
-        Debug.Assert(0 <= Index && Index < ItemCount);
-        return ItemPosition[Index];
+    public List<Vector2> GetItemPosition() {
+        //Debug.Assert(0 <= Index && Index < ItemCount);
+        return ItemPosition;
     }
 
 }
