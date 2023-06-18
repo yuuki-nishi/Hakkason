@@ -63,7 +63,7 @@ public class Enemy : Character.Character
         dist[see.Peek().X, see.Peek().Y] = 0;
 
         int[] dx = {0,1,0,-1};
-        int[] dy = {1,0,-1,0};
+        int[] dy = {-1,0,1,0};
         while (see.Count != 0) {
             (int X, int Y) pos = see.Dequeue();
             for (int i = 0; i < 4; i++) {
@@ -74,11 +74,26 @@ public class Enemy : Character.Character
             }
         }
 
+        direction = Direction.Down;
         if (dist[(int)Location.x, (int)Location.y] < 20) {
             for (int i = 0; i < 4; i++) {
                 if (dist[(int)Location.x + dx[i] , (int)Location.y + dy[i]] == dist[(int)Location.x, (int)Location.y] - 1 ) {
                     Location.x += dx[i];
                     Location.y += dy[i];
+                    switch(i){
+                        case 0:
+                        direction = Direction.Down;
+                        break;
+                        case 1:
+                        direction = Direction.Right;
+                        break;
+                        case 2:
+                        direction = Direction.Up;
+                        break;
+                        default:
+                        direction = Direction.Left;
+                        break;
+                    }
                     break;
                 }
             }
@@ -88,7 +103,6 @@ public class Enemy : Character.Character
         }
     }
 
-
     void MoveRandom() {
         List<int> dir = new List<int>();
         for (int i = 0; i < 4; i++)dir.Add(i);
@@ -97,12 +111,26 @@ public class Enemy : Character.Character
             (dir[i], dir[p]) = (dir[p], dir[i]);
         }
         int[] dx = {0,1,0,-1};
-        int[] dy = {1,0,-1,0};
+        int[] dy = {-1,0,1,0};
 
         for (int i = 0; i < 4; i++) {
             if(canMove((int)Location.x + dx[dir[i]], (int)Location.y + dy[dir[i]])){
                 Location.x += dx[dir[i]];
                 Location.y += dy[dir[i]];
+                switch(i){
+                    case 0:
+                    direction = Direction.Down;
+                    break;
+                    case 1:
+                    direction = Direction.Right;
+                    break;
+                    case 2:
+                    direction = Direction.Up;
+                    break;
+                    default:
+                    direction = Direction.Left;
+                    break;
+                }
                 break;
             }
         }
