@@ -14,7 +14,7 @@ public class MapClass
                                   { Enums.Maptile.Floor, Enums.Maptile.Floor, Enums.Maptile.Ladder },
                                   { Enums.Maptile.Floor, Enums.Maptile.Floor, Enums.Maptile.Floor }};
     public MapClass(){
-        var startxy= this.mapcreater.CreateMap(50,50,5);
+        var startxy= this.mapcreater.CreateMap(40,40,6);
         this.Xsize = mapcreater.width;
         this.Ysize = mapcreater.height;
         this.startx = startxy.Item1;
@@ -53,6 +53,12 @@ public class MapClass
         Debug.Assert(y>=0);
         Debug.Assert(x<this.Xsize);
         Debug.Assert(y<this.Ysize);
+
+        for (int i = 0; i < enemies.Count; i++ ) {
+            if(x == (int)enemies[i].transform.position.x && y == (int)enemies[i].transform.position.y ) {
+                return false;
+            }
+        }
         Enums.Maptile attr = this.mapcreater.GetTile(x,y);
         return this.mapcreater.isFloor(x,y);
     }
