@@ -16,39 +16,42 @@ public class Gauge : MonoBehaviour
     void Start()
     {
         value = maxValue;
-        _slider.value = 100;
+        _slider.value = value;
     }
 
     // Update is called once per frame
     void Update()
     {
-        void Gauge(float dmg)
-        {
-            value -= dmg;
-            if(value > maxValue)
-            {
-                value = maxValue;
-            }
-            if(value <= 0)
-            {
-                value = 0;
-                _slider.gameObject.SetActive(false);
-            }
-            _slider.value = value;
-            Debug.Log(value);
-        }
-
-        void Damage(){ Gauge(damage); }
-        void Cure(){ Gauge(-cure); }
 
         //動作確認
         if(Input.GetKeyDown(KeyCode.Alpha1))
         {
-            Damage();
+            Damage(damage);
         }
         if(Input.GetKeyDown(KeyCode.Alpha2))
         {
-            Cure();
+            Cure(cure);
         }
     }
+
+    public void ValueSet(float dmg)
+    {
+        value -= dmg;
+        if(value > maxValue)
+        {
+            value = maxValue;
+        }
+        if(value <= 0)
+        {
+            value = 0;
+            _slider.gameObject.SetActive(false);
+        }
+        _slider.value = value;
+        Debug.Log($"{_slider}: {value}");
+    }
+
+    public void Damage(float damage){ ValueSet(damage); }
+    public void Cure(float cure){ ValueSet(-cure); }
+
 }
+
