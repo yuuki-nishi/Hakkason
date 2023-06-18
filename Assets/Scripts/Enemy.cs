@@ -14,7 +14,7 @@ public class Enemy : Character.Character
 
     int Height,Width;
     int[,] map; 
-    List<(int X, int Y)> cantposition;
+    private List<(int X, int Y)> cantposition;
 
     public Enemy(){
         Height = GameMaster.MapData.Xsize;
@@ -25,6 +25,10 @@ public class Enemy : Character.Character
                 map[i,j] = GameMaster.MapData.Get(i,j)==Maptile.Wall?1:0; 
             }
         }
+        // Debug.Log("construct enemy");
+        // Debug.Log(this.Height);
+        // Debug.Log(this.Width);
+        // Debug.Assert(Height == 50);
 
         cantposition = new List<(int X, int Y)>();
     }
@@ -40,14 +44,24 @@ public class Enemy : Character.Character
     }
 
     public void randommove(){
-        cantposition.Clear();
-        cantposition.Add(((int)GameMaster.playerstate.Location.x , (int)GameMaster.playerstate.Location.y));
+        //return;
+        if (cantposition == null){
+            cantposition = new List<(int X, int Y)>();
+        }
+        if (cantposition.Count > 0){
+            cantposition = new List<(int X, int Y)>();
+        }
+        Vector2 Location = this.Location;
+        (int,int) addinput = ((int)GameMaster.playerstate.Location.x, (int)GameMaster.playerstate.Location.y);
+        //cantposition.Add(addinput);
+        //return;
         for (int i = 0; i < GameMaster.MapData.enemies.Count; i++) {
             (int X,int Y) tmp = (((int)GameMaster.MapData.enemies[i].transform.position.x , (int)GameMaster.MapData.enemies[i].transform.position.y ));
             if(tmp.X != (int)Location.x || tmp.Y != (int)Location.y) {
                 cantposition.Add(tmp);
             }
         }
+        //return;
         for (int i = 0; i < GameMaster.MapData.senbeis.Count; i++) {
             cantposition.Add(((int)GameMaster.MapData.senbeis[i].transform.position.x , (int)GameMaster.MapData.senbeis[i].transform.position.y ));
         }
@@ -59,7 +73,9 @@ public class Enemy : Character.Character
             }
         }
         Queue<(int X, int Y)> see = new Queue<(int X, int Y)>();
-        see.Enqueue(((int)GameMaster.playerstate.Location.x, (int)GameMaster.playerstate.Location.y));
+        //return;
+        (int,int) enqueueinput = ((int)GameMaster.playerstate.Location.x, (int)GameMaster.playerstate.Location.y);
+        see.Enqueue(enqueueinput);
         dist[see.Peek().X, see.Peek().Y] = 0;
 
         int[] dx = {0,1,0,-1};

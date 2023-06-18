@@ -21,6 +21,7 @@ public class GameMaster : MonoBehaviour
     [SerializeField] public Sprite WallSprite;
     [SerializeField] public Sprite FloorSprite;
     [SerializeField] public Sprite LadderSprite;
+    [SerializeField] public GameObject SoundManager;
 
     void Start()
     {
@@ -132,6 +133,13 @@ public class GameMaster : MonoBehaviour
         //turnprocessflagが立つと、敵が行動できる
 
         if (turnprocessflag){
+            foreach (GameObject e in MapData.enemies){
+                Enemy enemy = e.GetComponent<Enemy>();
+                //enemy.randommove();
+                Vector2 movedloc = enemy.Location;
+                Vector3 fortransloc = new Vector3(movedloc.x,movedloc.y,e.transform.position.z);
+                e.transform.position=fortransloc;
+            }
             this.inputkey_cooltime = 30;
             this.turn=Enums.Turn.Enemy;
             foreach (GameObject e in MapData.enemies){
@@ -209,7 +217,7 @@ public class GameMaster : MonoBehaviour
         //カメラを動かす
         float z = this.maincamera.transform.position.z;
         float scale = 1.0f;
-        //Debug.Log(this.player.GetComponent<Player>().Location);
+        Debug.Log(this.player.GetComponent<Player>().Location);
         Vector3 settarget = new Vector3(this.player.GetComponent<Player>().Location.x*scale, this.player.GetComponent<Player>().Location.y*scale, z);
         this.maincamera.transform.position = settarget;
         //キャラの描写のし直し
