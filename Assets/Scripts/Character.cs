@@ -21,12 +21,12 @@ namespace Character{
         }
         public Sprite GetSpriteFromDirAndTime(Enums.Direction dir,int time){
             int animenum = this.AnimationSprites.Count/4;
-            int frameinterval = 5;//何フレームに一回切り替えるか
+            int frameinterval = 20;//何フレームに一回切り替えるか
             int targetanimenum = (time/frameinterval) % animenum;
             int dirnum = this.enumtoint(dir);
             int targetnumber = dirnum*animenum + targetanimenum;
 
-            return this.AnimationSprites[targetanimenum];
+            return this.AnimationSprites[targetnumber];
 
         }
         private int enumtoint(Enums.Direction dir){
@@ -35,12 +35,12 @@ namespace Character{
                 ret = 0;
             }else if (dir == Enums.Direction.Down){
                 ret = 1;
-            }else if (dir == Enums.Direction.Left){
-                ret = 2;
             }else if (dir == Enums.Direction.Right){
+                ret = 2;
+            }else if (dir == Enums.Direction.Left){
                 ret = 3;
             }else{
-                ret = -1;
+                ret = -100;
             }
             return ret;
         }

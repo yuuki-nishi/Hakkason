@@ -23,11 +23,11 @@ public class MapClass
         Debug.Assert(y>=0);
         Debug.Assert(x<this.Xsize);
         Debug.Assert(y<this.Ysize);
-        Enums.Maptile attr = this.mapcreater.Get(x,y);
+        Enums.Maptile attr = this.mapcreater.GetTile(x,y);
         return this.mapcreater.isFloor(x,y);
     }
     public Enums.Maptile Get(int x,int y){
-        return this.mapcreater.Get(x,y);
+        return this.mapcreater.GetTile(x,y);
     }
 
 }

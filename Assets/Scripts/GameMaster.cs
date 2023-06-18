@@ -6,9 +6,10 @@ using Enums;
 public class GameMaster : MonoBehaviour
 {
     // Start is called before the first frame update
-    public MapClass MapData;//描写用ではなく、なんかデータ格納してるやつ
+    public static MapClass MapData;//描写用ではなく、なんかデータ格納してるやつ
     public Turn turn = Turn.Player;//外部読み込み用
     [SerializeField] public GameObject player;
+    public static Player playerstate;
     public List<Enemy> enemies;
     public int enemynum = 3;
     private int inputkey_cooltime = 30;
@@ -21,7 +22,7 @@ public class GameMaster : MonoBehaviour
 
     void Start()
     {
-        this.MapData = new MapClass();
+        MapData = new MapClass();
         //this.player = new Player();
         this.enemies = new List<Enemy>();
         for (int i = 0;i < this.enemynum;i++){
@@ -31,7 +32,7 @@ public class GameMaster : MonoBehaviour
         this.maplayer = new Maplayer(this.maplayerobject,this.WallSprite,this.FloorSprite,this.LadderSprite);
         this.TileMapchips();
         //プレイヤーの初期地点
-        Vector2 startvec = new Vector2(this.MapData.startx,this.MapData.starty);
+        Vector2 startvec = new Vector2(MapData.startx,MapData.starty);
         this.player.GetComponent<Player>().Location = startvec;
     }
 
@@ -44,6 +45,7 @@ public class GameMaster : MonoBehaviour
         }else{
             this.UpdateState();
         }
+        playerstate = this.player.GetComponent<Player>();
     }
     void UpdateState(){
 
@@ -74,12 +76,17 @@ public class GameMaster : MonoBehaviour
         //向きを変えるだけならばタダ
         if (playerdir != Enums.Direction.Null){
             this.player.GetComponent<Player>().direction = playerdir;
-            //SpriteRenderer renderer = this.player.GetComponent<SpriteRenderer>();
-            //アニメーションゲット
-            Sprite changesprite = this.player.GetComponent<Player>().GetSpriteFromDirAndTime(playerdir,Time.frameCount);
-            this.player.GetComponent<SpriteRenderer>().sprite = changesprite;
 
+        }else{
+            //向きは変わらない
+            playerdir = this.player.GetComponent<Player>().direction;
         }
+        //プレイヤーをアニメーションさせる
+        SpriteRenderer renderer = this.player.GetComponent<SpriteRenderer>();
+        //アニメーションゲット
+        Sprite changesprite = this.player.GetComponent<Player>().GetSpriteFromDirAndTime(playerdir,Time.frameCount);
+        renderer.sprite = changesprite;
+        //
         Vector2 ploc = this.player.GetComponent<Player>().Location;//画面ではなく、抽象的な升目の方
         Vector2 movetargetloc = movevec + ploc;
         //敵の方向に入力したかを見る
@@ -94,12 +101,12 @@ public class GameMaster : MonoBehaviour
         //まず画面外の場合
         bool b1 = (int)movetargetloc.x < 0;
         bool b2 = (int)movetargetloc.y < 0;
-        bool b3 = (int)movetargetloc.x >= this.MapData.Xsize;
-        bool b4 = (int)movetargetloc.y >= this.MapData.Ysize;
+        bool b3 = (int)movetargetloc.x >= MapData.Xsize;
+        bool b4 = (int)movetargetloc.y >= MapData.Ysize;
         bool movable = !(b1|b2|b3|b4);
         //次に、壁の場合
         if (movable){
-            movable = movable & this.MapData.isMovable((int)movetargetloc.x,(int)movetargetloc.y);
+            movable = movable & MapData.isMovable((int)movetargetloc.x,(int)movetargetloc.y);
         }
         bool turnprocessflag = false;
         if (inputkeyflag & (attackedenemy == null) & movable){
@@ -147,12 +154,12 @@ public class GameMaster : MonoBehaviour
         Debug.Assert(this.maplayer != null);
         this.maplayer.hello();
         this.maplayer.clear();
-        for (int x = 0;x < this.MapData.Xsize; x++){
-            for (int y = 0;y< this.MapData.Ysize; y++){
+        for (int x = 0;x < MapData.Xsize; x++){
+            for (int y = 0;y< MapData.Ysize; y++){
                 //Debug.Log(y);
-                Enums.Maptile maptile = this.MapData.Get(x,y);
-                float x_in_screen = x-this.MapData.Xsize/2;
-                float y_in_screen = y-this.MapData.Ysize/2;
+                Enums.Maptile maptile = MapData.Get(x,y);
+                float x_in_screen = x-MapData.Xsize/2;
+                float y_in_screen = y-MapData.Ysize/2;
                 this.maplayer.addchip(x,y,maptile);
             }
         }
