@@ -43,13 +43,13 @@ public class Enemy : Character.Character
         cantposition.Clear();
         cantposition.Add(((int)GameMaster.playerstate.Location.x , (int)GameMaster.playerstate.Location.y));
         for (int i = 0; i < GameMaster.MapData.enemies.Count; i++) {
-            (int X,int Y) tmp = (((int)GameMaster.MapData.enemies[i].Location.x , (int)GameMaster.MapData.enemies[i].Location.y ));
+            (int X,int Y) tmp = (((int)GameMaster.MapData.enemies[i].transform.position.x , (int)GameMaster.MapData.enemies[i].transform.position.y ));
             if(tmp.X != (int)Location.x || tmp.Y != (int)Location.y) {
                 cantposition.Add(tmp);
             }
         }
         for (int i = 0; i < GameMaster.MapData.senbeis.Count; i++) {
-            cantposition.Add(((int)GameMaster.MapData.senbeis[i].Location.x , (int)GameMaster.MapData.senbeis[i].Location.y ));
+            cantposition.Add(((int)GameMaster.MapData.senbeis[i].transform.position.x , (int)GameMaster.MapData.senbeis[i].transform.position.y ));
         }
 
         int[,]dist = new int[Height, Width];
